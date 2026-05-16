@@ -48,7 +48,11 @@ def train_mode(args, cfg: dict):
     if gpu_ids is None:
         gpu_ids = list(range(torch.cuda.device_count())) if torch.cuda.is_available() else [0]
     device = f"cuda:{gpu_ids[0]}" if torch.cuda.is_available() else "cpu"
-    print(f"Using GPUs: {gpu_ids}, primary device: {device}")
+    gpu_names = []
+    if torch.cuda.is_available():
+        for gid in gpu_ids:
+            gpu_names.append(torch.cuda.get_device_name(gid))
+    print(f"  GPUs: {gpu_ids} ({', '.join(gpu_names)})")
 
     # Coerce numeric config values (YAML 1.1 may parse e.g. "1e-4" as str)
     lr = float(train_cfg["learning_rate"])
@@ -56,6 +60,22 @@ def train_mode(args, cfg: dict):
     steps_per_epoch = int(train_cfg["steps_per_epoch"])
     num_epochs = int(train_cfg["num_epochs"])
     batch_size = int(train_cfg["batch_size"])
+
+    # Print training config summary
+    print(f"\n{'='*60}")
+    print(f"  Training Config")
+    print(f"{'='*60}")
+    print(f"  Learning rate:       {lr}")
+    print(f"  Warmup steps:        {warmup}")
+    print(f"  Steps per epoch:     {steps_per_epoch}")
+    print(f"  Num epochs:          {num_epochs}")
+    print(f"  Batch size:          {batch_size}")
+    print(f"  Total steps:         {steps_per_epoch * num_epochs}")
+    print(f"  Data path:           {data_cfg['tracers_path']}")
+    print(f"  Grid resolution:     {data_cfg['grid_resolution']}")
+    print(f"  Observation ratio:   {data_cfg['obs_ratio']}")
+    print(f"  Mask type:           {data_cfg['mask_type']}")
+    print(f"{'='*60}\n")
 
     # Data
     dataloader = create_dataloader(
@@ -72,12 +92,14 @@ def train_mode(args, cfg: dict):
         file_pattern=data_cfg.get("file_pattern", "*"),
         max_samples=data_cfg.get("max_samples", None),
     )
-    print(f"Dataset size: {len(dataloader.dataset)} samples")
+    print(f"  Dataset size: {len(dataloader.dataset)} samples")
 
     # Model
     model = build_model(cfg)
     n_params = sum(p.numel() for p in model.parameters())
-    print(f"Model parameters: {n_params / 1e6:.2f}M")
+    mem_mb = n_params * 4 / (1024 ** 2)  # ~float32
+    print(f"  Model parameters: {n_params / 1e6:.2f}M (≈{mem_mb:.0f}MB in FP32)")
+    print(f"{'='*60}\n")
 
     total_steps = steps_per_epoch * num_epochs
     trainer = PerFlowTrainer(

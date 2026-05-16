@@ -1,5 +1,6 @@
 """Training loop for PerFlow (Rectified Flow training) with multi-GPU support."""
 
+import time
 import torch
 import torch.nn as nn
 from torch.optim.lr_scheduler import CosineAnnealingLR, LinearLR, SequentialLR
@@ -54,13 +55,14 @@ class PerFlowTrainer:
         self.loss_fn = nn.MSELoss()
         self.step = 0
 
-    def train_epoch(self) -> float:
+    def train_epoch(self, epoch: int = 0, num_epochs: int = 0) -> float:
         """Train for one epoch. Returns average loss."""
         self.raw_model.train()
         total_loss = 0.0
         num_batches = 0
+        start_time = time.time()
 
-        pbar = tqdm(self.dataloader, desc="Training")
+        pbar = tqdm(self.dataloader, desc=f"Epoch {epoch}/{num_epochs}", unit="batch", ncols=100)
         for batch in pbar:
             # Move to device
             x_1 = batch["field"].to(self.device)   # (B, 2, H, W) ground truth
@@ -98,21 +100,51 @@ class PerFlowTrainer:
 
             total_loss += loss.item()
             num_batches += 1
-            pbar.set_postfix({"loss": f"{loss.item():.6f}", "lr": f"{self.scheduler.get_last_lr()[0]:.2e}"})
+            elapsed = time.time() - start_time
+            mem = ""
+            if torch.cuda.is_available():
+                mem_gb = torch.cuda.max_memory_allocated(self.device) / 1e9
+                mem = f"{mem_gb:.1f}GB"
+            pbar.set_postfix({
+                "loss": f"{loss.item():.6f}",
+                "lr": f"{self.scheduler.get_last_lr()[0]:.2e}",
+                "mem": mem,
+                "elapsed": f"{elapsed:.0f}s",
+            })
 
         return total_loss / max(num_batches, 1)
 
     def train(self, num_epochs: int) -> list:
         """Run full training. Returns list of epoch losses."""
+        total_start = time.time()
         losses = []
+        print(f"\n{'='*60}")
+        print(f"  Training started: {num_epochs} epochs, {len(self.dataloader)} batches/epoch")
+        print(f"  Total steps: {num_epochs * len(self.dataloader)}")
+        print(f"{'='*60}\n")
         for epoch in range(num_epochs):
-            loss = self.train_epoch()
+            epoch_start = time.time()
+            loss = self.train_epoch(epoch=epoch + 1, num_epochs=num_epochs)
             losses.append(loss)
-            print(f"Epoch {epoch + 1}/{num_epochs} — Loss: {loss:.6f}")
+            epoch_time = time.time() - epoch_start
+            total_time = time.time() - total_start
+            lr_now = self.scheduler.get_last_lr()[0]
+            print(
+                f"  ✓ Epoch {epoch + 1}/{num_epochs}  "
+                f"loss={loss:.6f}  "
+                f"lr={lr_now:.2e}  "
+                f"time={epoch_time:.0f}s  "
+                f"total={total_time:.0f}s"
+            )
 
             # Save checkpoint every 25 epochs
             if (epoch + 1) % 25 == 0:
                 self.save_checkpoint(epoch + 1, loss)
+        total_time = time.time() - total_start
+        print(f"\n{'='*60}")
+        print(f"  Training completed in {total_time:.0f}s ({total_time/60:.1f} min)")
+        print(f"  Final loss: {losses[-1]:.6f}" if losses else "  No training data")
+        print(f"{'='*60}\n")
         return losses
 
     def save_checkpoint(self, epoch: int, loss: float):

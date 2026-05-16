@@ -5,6 +5,7 @@ import numpy as np
 from torch.utils.data import Dataset, DataLoader
 from pathlib import Path
 from typing import Optional, Tuple, List
+from tqdm import tqdm
 
 
 def parse_trajectories(tracers_path: str) -> dict:
@@ -172,10 +173,16 @@ class VelocityFieldDataset(Dataset):
                 f"No trajectory files matching '{file_pattern}' in: {tracers_path}"
             )
 
-        print(f"Loading {len(traj_files)} trajectory file(s) matching '{file_pattern}' from: {tracers_path}")
-        for fpath in traj_files:
+        pbar = tqdm(
+            traj_files,
+            desc="Loading trajectory files",
+            unit="file",
+            ncols=100,
+        )
+        for fpath in pbar:
             if max_samples is not None and len(self.fields) >= max_samples:
                 break
+            pbar.set_postfix({"file": Path(str(fpath)).name, "samples": len(self.fields)})
             try:
                 trajs = parse_trajectories(str(fpath))
                 if not trajs:
@@ -183,6 +190,8 @@ class VelocityFieldDataset(Dataset):
                 vel_data = compute_velocities(trajs)
                 if not vel_data:
                     continue
+                n_traj = len(vel_data)
+                n_pts = sum(len(v) for v in vel_data.values())
 
                 if time_window is not None:
                     for pid, pts in vel_data.items():
@@ -201,8 +210,15 @@ class VelocityFieldDataset(Dataset):
                         vel_data, grid_res, x_range, y_range
                     )
                     self.fields.append(field)
+
+                pbar.set_postfix({
+                    "file": Path(str(fpath)).name,
+                    "trajs": n_traj,
+                    "pts": n_pts,
+                    "samples": len(self.fields),
+                })
             except Exception as e:
-                print(f"  Warning: skipping {fpath} ({e})")
+                print(f"\n  Warning: skipping {Path(str(fpath)).name} ({e})")
                 continue
 
         if not self.fields:
@@ -226,10 +242,10 @@ class VelocityFieldDataset(Dataset):
         field = self.fields[idx]
         y_obs, mask = generate_sparse_observation(field, self.obs_ratio, self.mask_type)
         return {
-            # Use torch.as_tensor instead of from_numpy for cross-version NumPy compat
-            "field": torch.as_tensor(field),
-            "y_obs": torch.as_tensor(y_obs),
-            "mask": torch.as_tensor(mask),
+            # Wrap in np.asarray first to handle numpy scalar types (compat with NumPy 2.x)
+            "field": torch.as_tensor(np.asarray(field)),
+            "y_obs": torch.as_tensor(np.asarray(y_obs)),
+            "mask": torch.as_tensor(np.asarray(mask)),
         }
 
 
