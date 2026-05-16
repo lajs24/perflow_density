@@ -29,24 +29,35 @@ def run_step(step_name: str, cmd: list, f, tee: bool = True) -> bool:
     log(f"----- Step: {step_name} -----", f, tee)
     log(f"Command: {' '.join(cmd)}", f, tee)
 
-    result = subprocess.run(cmd, capture_output=True, text=True)
+    process = subprocess.Popen(
+        cmd,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+        bufsize=1,
+    )
 
-    # Write raw output to output.txt
-    if result.stdout:
-        f.write(result.stdout)
-    if result.stderr:
-        f.write(result.stderr)
-    f.flush()
+    # Stream output in real-time
+    returncode = None
+    stdout_lines = []
+    if process.stdout:
+        for line in iter(process.stdout.readline, ""):
+            stdout_lines.append(line)
+            f.write(line)
+            f.flush()
+            if tee:
+                print(line, end="", flush=True)
+        process.stdout.close()
+    returncode = process.wait()
 
-    if result.returncode != 0:
-        log(f"ERROR: {step_name} failed with exit code {result.returncode}", f, tee)
-        # Print last lines of stderr for quick diagnosis
-        if result.stderr:
-            stderr_lines = result.stderr.strip().split("\n")
-            tail = stderr_lines[-10:]
-            log("--- stderr tail (last 10 lines) ---", f, True)
-            for line in tail:
-                log(f"  {line}", f, True)
+    if returncode != 0:
+        log(f"ERROR: {step_name} failed with exit code {returncode}", f, tee)
+        # Show last 10 lines for quick diagnosis
+        stderr_lines = [l for l in stdout_lines if l.strip()]
+        tail = stderr_lines[-10:]
+        log("--- stderr tail (last 10 lines) ---", f, True)
+        for line in tail:
+            log(f"  {line.strip()}", f, True)
         return False
 
     log(f"OK: {step_name} completed", f, tee)
