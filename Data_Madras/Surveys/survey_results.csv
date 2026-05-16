@@ -1,0 +1,80 @@
+Adults;Children;total;From;To;From_keyword;To_keyword
+2;;2;Home (metro);DNK;Terreaux zone;DNK / home / metro
+3;5;8;Big loop already started on Place des Terreaux;Hotel de Ville (metro);Terreaux zone;DNK / home / metro
+2;;2;Place des Jacobins;Metro;Place des Jacobins;DNK / home / metro
+2;;2;Bellecour;Home (metro);Bellecour;DNK / home / metro
+2;;2;Fourvière;Home (metro);Fourviere;DNK / home / metro
+6;;6;Bellecour;DNK;Bellecour;DNK / home / metro
+2;;2;Place Sathonay;Place de la Bourse;Place Sathonay;Place de la Bourse
+2;;2;Bellecour;Rue du Puy Gaillot (kebab);Bellecour;Rue du Puy Gaillot (kebab)
+2;;2;Already at Place des Terreaux before;Av. République;Terreaux zone;Av. République
+1;2;3;No answer;No answer;No answer;No answer
+2;0;2;Restaurant (south of Terreaux);Towards Saone?;Terreaux zone;Towards Saone?
+4;;4;Bellecour;Bellecour;Bellecour;Bellecour
+6;;6;Place Saint Jean;;Place Saint Jean;
+3;;3;Cordeliers (metro);DNK;Cordeliers;DNK / home / metro
+1;0;1;Cordeliers (metro);Home;Cordeliers;DNK / home / metro
+7;;7;Restaurant (south of Terreaux);Parc Tête d’Or;Terreaux zone;Tete d Or
+4;;4;Metro D;Place des Jacobins;Bellecour;Place des Jacobins
+4;0;4;Place Antonin Poncet;Home;Place Antonin Poncet;DNK / home / metro
+2;;2;Institut Lumière (69008);Place des Jacobins;Institut Lumière (69008);Place des Jacobins
+3;;3;South;Hotel de Ville (metro);South;Hotel de Ville (metro)
+7;;7;Bellecour;Bellecour;Bellecour;Bellecour
+2;;2;Quartier Grolée;Parc Tête d’Or;Quartier Grolée;Tete d Or
+1;;1;No answer;No answer;No answer;No answer
+4;;4;Bellecour;Vieux Lyon?;Bellecour;Vieux Lyon?
+10;;10;Restaurant (south of Terreaux);Place des Jacobins;Terreaux zone;Place des Jacobins
+2;;2;Place des Jacobins;Home;Place des Jacobins;DNK / home / metro
+3;;3;Bellecour;Find friends;Bellecour;Find friends
+2;;2;Home;Saint Jean;Terreaux zone;Saint Jean
+2;;2;Saint Jean;Bellecour;Saint Jean;Bellecour
+4;;4;Saint Jean;DNK;Saint Jean;DNK / home / metro
+3;;3;Place des Célestins;Home / DNK;Celestins;DNK / home / metro
+3;;3;Opéra;Saint Jean;Opéra;Celestins
+6;;6;Place des Célestins;Home / DNK;Celestins;DNK / home / metro
+2;;2;Parc de la Tête d’Or;Home / DNK;Parc de la Tete d Or;DNK / home / metro
+3;;3;Saint Jean;Home / DNK;Saint Jean;DNK / home / metro
+4;1;5;Saint Jean;Home / DNK;Saint Jean;DNK / home / metro
+5;;5;;;;
+3;;3;Parc de la Tête d’Or;Home / DNK;Parc de la Tete d Or;DNK / home / metro
+3;;3;;Saint Jean;;Saint Jean
+3;;3;;Bellecour;;Bellecour
+2;1;3;Place des Jacobins;Bellecour;Place des Jacobins;Bellecour
+6;2;8;Place des Jacobins;Bellecour;Place des Jacobins;Bellecour
+4;;4;Bellecour;Saint Jean;Bellecour;Saint Jean
+4;;4;Fourviere;Saint Jean;Fourviere;Saint Jean
+4;;4;Place de la République;Saint Jean;Place de la Republique;Saint Jean
+2;;2;Bellecour;DNK;Bellecour;DNK / home / metro
+6;;6;Bellecour;DNK;Bellecour;DNK / home / metro
+2;;2;Bellecour;Hôtel de Ville;Bellecour;DNK / home / metro
+2;;2;Saint Jean;Hôtel de Ville;Saint Jean;DNK / home / metro
+2;;2;Saint Jean;Hôtel de Ville;Saint Jean;DNK / home / metro
+21;;21;Fourvière;DNK;Fourviere;DNK / home / metro
+4;;4;Bellecour;DNK;Bellecour;DNK / home / metro
+5;;5;Monchat;DNK;Monchat;DNK / home / metro
+5;;5;Bellecour;DNK;Bellecour;DNK / home / metro
+2;;2;Saint Jean;DNK;Saint Jean;DNK / home / metro
+3;;3;Saint Paul;Parc de la Tête d’Or;Saint Paul;Parc de la Tete d Or
+4;1;5;Saint Jean;;Saint Jean;
+6;2;8;Saint Paul;;Saint Paul;
+3;1;4;Fourvière;DNK;Fourviere;DNK / home / metro
+4;0;4;Saint Jean;DNK;Saint Jean;DNK / home / metro
+4;;4;Place des Jacobins;Saint Jean;Place des Jacobins;Saint Jean
+4;2;6;Place des Jacobins;Saint Jean;Place des Jacobins;Saint Jean
+4;;4;Saint Jean;DNK;Saint Jean;DNK / home / metro
+6;1;7;Saint Jean;?;Saint Jean;?
+;5;5;Saint Paul;?;Saint Paul;?
+4;;4;Fourvière;DNK;Fourviere;DNK / home / metro
+3;;3;Hôtel de Ville;DNK;Hôtel de Ville;DNK / home / metro
+3;;3;Bellecour;DNK;Bellecour;DNK / home / metro
+2;;2;Place des Jacobins;DNK;Place des Jacobins;DNK / home / metro
+2;;2;Place de la Bourse;Saint Paul;Place de la Bourse;Saint Paul
+5;;5;Célestins;DNK;Celestins;DNK / home / metro
+2;;2;East of Terreaux (restaurant);DNK;Terreaux zone;DNK / home / metro
+2;;2;Hôtel de Ville;;Terreaux zone;
+2;;2;South of Terreaux (restaurant);Vieux Lyon;Terreaux zone;Vieux Lyon
+2;;2;Bellecour;DNK;Bellecour;DNK / home / metro
+2;;2;Place des Célestins;DNK;Celestins;DNK / home / metro
+3;;3;République;Home;République;DNK / home / metro
+2;;2;République;Saint Jean;République;Saint Jean
+2;;2;Parc de la Tête d’Or;Place Sathonay;Parc de la Tete d Or;Place Sathonay

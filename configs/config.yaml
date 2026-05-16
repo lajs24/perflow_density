@@ -1,0 +1,51 @@
+# PerFlow Configuration
+
+data:
+  # Trajectory data path (file or directory; auto-discovers subfolders)
+  tracers_path: "Data_Madras/TopView_trajectories"
+
+  # Glob filter to pick specific files (e.g. "TopView_1*" for scene-1 only)
+  file_pattern: "TopView_1*"
+
+  # Grid parameters
+  grid_resolution: [64, 64]   # [H, W]; 128×128 with attn needs >8GB GPU
+  x_range: [-8, 8]             # x/m range (physical coordinates)
+  y_range: [-2, 10]            # y/m range (physical coordinates)
+
+  # Observation mask
+  obs_ratio: 0.1               # Fraction of observed grid cells
+  mask_type: "random"          # "random" or "fixed"
+
+  # Time window: split each trajectory into chunks of N frames for more samples
+  time_window: 150
+
+  # Max samples to keep (None = all). Trim if dataset is too large.
+  max_samples: 5000
+
+model:
+  # U-Net architecture
+  in_channels: 6               # x_t(2) + y_obs(2) + mask(2)
+  out_channels: 2              # velocity (vx, vy)
+  base_channels: 32
+  channel_multipliers: [1, 2, 4, 8]
+  num_res_blocks: 2
+  num_heads: 4
+
+  # Physics constraint
+  constraint_type: "incompressible"  # "mass_cons" or "incompressible"
+
+training:
+  batch_size: 8
+  learning_rate: 0.0001
+  num_epochs: 200
+  steps_per_epoch: 500
+  loss_type: "mse"             # "mse" or "l1"
+
+  # Scheduler
+  lr_scheduler: "cosine"
+  warmup_steps: 1000
+
+inference:
+  num_steps: 50                # ODE steps
+  solver: "euler"              # "euler" or "heun"
+  num_uq_samples: 10           # Number of runs for uncertainty quantification
