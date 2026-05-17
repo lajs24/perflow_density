@@ -7,6 +7,7 @@ from torch.optim.lr_scheduler import CosineAnnealingLR, LinearLR, SequentialLR
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 from models.perflow import unwrap_model
+from utils.paths import OUTPUT_DIR, ensure_output_dir
 
 
 class PerFlowTrainer:
@@ -148,7 +149,8 @@ class PerFlowTrainer:
         return losses
 
     def save_checkpoint(self, epoch: int, loss: float):
-        path = f"checkpoint_epoch{epoch}_loss{loss:.4f}.pt"
+        ensure_output_dir()
+        path = OUTPUT_DIR / f"checkpoint_epoch{epoch}_loss{loss:.4f}.pt"
         torch.save({
             "epoch": epoch,
             "step": self.step,

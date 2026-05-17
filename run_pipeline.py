@@ -10,7 +10,8 @@ PerFlow 完整训练+推理 Pipeline (跨平台 Python 脚本)
     python run_pipeline.py --checkpoint path.pt     # 指定已有 checkpoint
     python run_pipeline.py --output run.log         # 指定输出文件
 
-所有输出将写入 output.txt（或指定文件）并同时打印到终端。
+所有输出写入 output.txt，模型文件保存到 perflow_tmp/ 目录。
+GPU 数量自动检测: 优先使用所有可用 GPU 训练，推理使用单卡。
 GPU 数量自动检测: 优先使用所有可用 GPU 训练，推理使用单卡。
 """
 
@@ -19,6 +20,10 @@ import subprocess
 import sys
 import time
 from datetime import datetime
+from pathlib import Path
+
+# Output directory (sibling of project root)
+OUTPUT_DIR = Path(__file__).resolve().parent.parent / "perflow_tmp"
 
 
 def log(msg: str, f, tee: bool = True):
@@ -75,10 +80,10 @@ def parse_args():
                         help="Start from this step (skip all previous steps)")
     parser.add_argument("--skip", type=int, nargs="+", default=[],
                         help="Skip specific step numbers (e.g. --skip 1 3)")
-    parser.add_argument("--checkpoint", type=str, default="perflow_final.pt",
+    parser.add_argument("--checkpoint", type=str, default=str(OUTPUT_DIR / "perflow_final.pt"),
                         help="Path to existing checkpoint (for steps 2/3)")
-    parser.add_argument("--output", type=str, default="output.txt",
-                        help="Output log file (default: output.txt)")
+    parser.add_argument("--output", type=str, default=str(OUTPUT_DIR / "output.txt"),
+                        help="Output log file")
     return parser.parse_args()
 
 
@@ -88,6 +93,9 @@ def main():
     skip_set = set(args.skip)
     start_from = args.start_from
     output_file = args.output
+
+    # Ensure output directory exists
+    Path(output_file).parent.mkdir(parents=True, exist_ok=True)
 
     with open(output_file, "a", encoding="utf-8") as f:
         log("====== PerFlow Pipeline Started ======", f, tee)

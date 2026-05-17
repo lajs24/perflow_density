@@ -18,6 +18,7 @@ from training.trainer import PerFlowTrainer
 from inference.reconstruct import reconstruct, reconstruct_with_uncertainty
 from inference.solver import get_solver
 from utils.viz import plot_reconstruction, plot_training_curves
+from utils.paths import OUTPUT_DIR, ensure_output_dir
 
 
 def load_config(config_path: str) -> dict:
@@ -115,11 +116,14 @@ def train_mode(args, cfg: dict):
     losses = trainer.train(num_epochs=num_epochs)
 
     # Save final model
-    torch.save(trainer.raw_model.state_dict(), "perflow_final.pt")
-    print("Final model saved: perflow_final.pt")
+    ensure_output_dir()
+    final_path = OUTPUT_DIR / "perflow_final.pt"
+    torch.save(trainer.raw_model.state_dict(), final_path)
+    print(f"Final model saved: {final_path}")
 
     # Plot training curves
-    plot_training_curves(losses, save_path="training_loss.png")
+    loss_plot = OUTPUT_DIR / "training_loss.png"
+    plot_training_curves(losses, save_path=str(loss_plot))
     print(f"Training complete. Final loss: {losses[-1]:.6f}")
 
 
@@ -182,9 +186,9 @@ def reconstruct_mode(args, cfg: dict):
         ground_truth=field,
         sparse_obs=y_obs,
         reconstruction=result,
-        save_path="reconstruction_result.png",
+        save_path=str(OUTPUT_DIR / "reconstruction_result.png"),
     )
-    print("Reconstruction saved: reconstruction_result.png")
+    print(f"Reconstruction saved: {OUTPUT_DIR / 'reconstruction_result.png'}")
 
 
 def uq_mode(args, cfg: dict):
@@ -234,9 +238,9 @@ def uq_mode(args, cfg: dict):
         sparse_obs=y_obs,
         reconstruction=mean,
         uncertainty=std,
-        save_path="uq_reconstruction.png",
+        save_path=str(OUTPUT_DIR / "uq_reconstruction.png"),
     )
-    print(f"UQ reconstruction saved: uq_reconstruction.png (std averaged over {num_samples} samples)")
+    print(f"UQ reconstruction saved: {OUTPUT_DIR / 'uq_reconstruction.png'} (std averaged over {num_samples} samples)")
 
 
 def main():
