@@ -13,7 +13,7 @@ import torch
 import numpy as np
 
 from models.perflow import PerFlowModel
-from data.dataset import create_dataloader, generate_sparse_observation, velocity_field_from_trajectories, compute_velocities, parse_trajectories
+from data.dataset import create_dataloader, generate_sparse_observation, velocity_field_from_trajectories, compute_velocities, parse_trajectories, find_trajectory_files
 from training.trainer import PerFlowTrainer
 from inference.reconstruct import reconstruct, reconstruct_with_uncertainty
 from inference.solver import get_solver
@@ -149,7 +149,10 @@ def reconstruct_mode(args, cfg: dict):
     data_cfg = cfg["data"]
     infer_cfg = cfg["inference"]
 
-    trajs = parse_trajectories(data_cfg["tracers_path"])
+    files = find_trajectory_files(data_cfg["tracers_path"], data_cfg.get("file_pattern", "*"))
+    if not files:
+        raise FileNotFoundError(f"No trajectory files in {data_cfg['tracers_path']}")
+    trajs = parse_trajectories(files[0])
     vel_data = compute_velocities(trajs)
     field, _ = velocity_field_from_trajectories(
         vel_data,
@@ -197,7 +200,10 @@ def uq_mode(args, cfg: dict):
     num_samples = args.num_samples or infer_cfg["num_uq_samples"]
 
     # Load sample
-    trajs = parse_trajectories(data_cfg["tracers_path"])
+    files = find_trajectory_files(data_cfg["tracers_path"], data_cfg.get("file_pattern", "*"))
+    if not files:
+        raise FileNotFoundError(f"No trajectory files in {data_cfg['tracers_path']}")
+    trajs = parse_trajectories(files[0])
     vel_data = compute_velocities(trajs)
     field, _ = velocity_field_from_trajectories(
         vel_data,
