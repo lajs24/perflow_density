@@ -216,3 +216,10 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# PerFlow generated files
+output.txt
+*.pt
+*.png
+checkpoint_*
+training_loss.png

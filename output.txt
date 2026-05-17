@@ -1,4 +1,0 @@
-[2026-05-16 21:43:36] ====== PerFlow Pipeline Started ======
-[2026-05-16 21:43:38] Detected 1 GPU(s), using IDs: 0
-[2026-05-16 21:43:38] ----- Step: 1/3: Training -----
-[2026-05-16 21:43:38] Command: C:\Users\Administrator\.conda\envs\crowd-diffusion\python.exe main.py --mode train --gpu-ids 0
